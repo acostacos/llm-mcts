@@ -1,3 +1,4 @@
 [submodule "vh/data_gene"]
 	path = vh/data_gene
 	url = https://github.com/acostacos/watch_and_help.git
+	branch = data_gene
