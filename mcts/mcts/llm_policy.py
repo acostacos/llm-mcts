@@ -1,4 +1,8 @@
 from openai import OpenAI
+from dotenv import load_dotenv
+load_dotenv()
+import os
+print(os.getenv("OPENAI_API_KEY"))
 
 client = OpenAI(api_key="Your key")
 import numpy as np
@@ -7,7 +11,6 @@ from sentence_transformers import SentenceTransformer
 from sentence_transformers import util as st_utils
 import json
 from typing import List
-import os
 import random
 
 MAX_STEPS = 20  # maximum number of steps to be generated

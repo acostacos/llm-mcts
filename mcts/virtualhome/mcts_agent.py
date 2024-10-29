@@ -85,7 +85,7 @@ class mcts_vh_env:
         self.task_goal = task_goal
         self.vh_pyenv.pomdp = True
         self.model = None
-        self.env_task_set = pickle.load(open('./vh/dataset/env_task_set_3_simple.pik', 'rb'))
+        self.env_task_set = pickle.load(open('./vh/dataset/env_task_set_50_simple_seen.pik', 'rb'))
         self.history = []
         self.init_history = []
         self.cur_state_graph = graph
@@ -343,7 +343,7 @@ def test():
     env_task_set = pickle.load(open(file_path, 'rb'))
     executable_args = {
                     'file_name': "./vh/vh_sim/simulation/unity_simulator/v2.2.5/linux_exec.v2.2.5_beta.x86_64",
-                    'x_display': "1",
+                    'x_display': "0",
                     'no_graphics': True
     }
     llm_model = LLM_Model("cuda:0", args.model)

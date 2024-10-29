@@ -168,14 +168,17 @@ class MCTSAgent:
 
             
         else:
-            state.children_probs, state.predicted_reward = self.llm_policy._calculate_emperical_prob(
+            # state.children_probs, state.predicted_reward = self.llm_policy._calculate_emperical_prob(
+            state.children_probs = self.llm_policy._calculate_emperical_prob(
                 history, ob, valid_actions, self.env.get_goal(), 10, 0, 0.95)
             
         self.state_dict[state.id] = state
         for valid_action in state.valid_actions:
             if isinstance(state.valid_actions, dict):
+                # If dict, we get dict[key] = value of action
                 state.children.append(ActionNode(state.valid_actions[valid_action]))
             else:
+                # Else list of actions
                 state.children.append(ActionNode(valid_action))
 
         return state
