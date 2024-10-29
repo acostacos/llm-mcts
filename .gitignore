@@ -163,3 +163,7 @@ cython_debug/
 # Project specific ignore
 vh/vh_sim/**
 port_*.txt
+
+# Datasets that are too big
+vh/dataset/env_task_set_500_full.pik
+vh/dataset/env_task_set_500_simple.pik
