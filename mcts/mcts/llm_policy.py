@@ -2,9 +2,8 @@ from openai import OpenAI
 from dotenv import load_dotenv
 load_dotenv()
 import os
-print(os.getenv("OPENAI_API_KEY"))
 
-client = OpenAI(api_key="Your key")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 import numpy as np
 import torch
 from sentence_transformers import SentenceTransformer

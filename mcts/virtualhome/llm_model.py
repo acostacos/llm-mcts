@@ -1,6 +1,10 @@
 from openai import OpenAI
+from dotenv import load_dotenv
+load_dotenv()
+import os
 
-client = OpenAI(api_key="Your Key")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# from ollama import Client
 import numpy as np
 import torch
 from sentence_transformers import SentenceTransformer
@@ -306,10 +310,26 @@ Now, answer the following questions:\n
                 }
                 ],
                 **self.get_goal_sample_params)
+
+                # Ollama
+                # client = Client(host='https://77fb-122-11-245-19.ngrok-free.app/')
+                # response = client.chat(model='llama3.2:latest', messages=[ {
+                #     "role": "system",
+                #     # "content": self.prompt_furniture_begin,
+                #     "content": self.prompt_begin,
+                # },
+                # {
+                #     "role": "user",
+                #     "content": task,
+                # }
+                # ],
+                # **self.sampling_params)
                 break
-            except:
+            except Exception as e:
+                print('Error calling model in llm_model: ', e)
+                print('Retrying...')
                 try_times += 1
-                time.sleep(5)
+                time.sleep(1)
             if try_times >= 10:
                 return None
         # print(task)
@@ -379,7 +399,12 @@ Now, answer the following questions:\n
                 if '' in sample_:
                     sample_.remove('')
                 if len(sample_) != 2:
-                    samples.append([sample_[0], sample_[1] + ' ' + sample_[2]])
+                    if len(sample_) < 2:
+                        print('sample_ < 2')
+                        print(sample_)
+                        samples.append([sample_[0], ''])
+                    else:
+                        samples.append([sample_[0], sample_[1] + ' ' + sample_[2]])
                 samples.append(sample_) 
         return samples
 

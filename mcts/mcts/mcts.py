@@ -54,7 +54,7 @@ class MCTSAgent:
         # self.num_actions = env.action_num
         self.best_action_node = None
         self.uct_type = uct_type
-        self.seed = args.seed
+        self.seed = 42 # args.seed
         self.round = args.round
         self.root = None
 
