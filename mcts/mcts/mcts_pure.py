@@ -32,7 +32,6 @@ class StateNode:
         self.predicted_reward = 0
         self.use_llm = False
 
-
 class ActionNode:
     def __init__(self, action):
         self.action = action
@@ -44,7 +43,7 @@ class ActionNode:
         self.children_id = None
 
 
-class MCTSAgent:
+class PureMCTSAgent:
     def __init__(self, args, env, policy=None, name='MCTS', 
                 uct_type='PUCT', valid_action_dict=None, actions_info=None,
                   log_dir=None, visited_transitions=None, replay_file=None,

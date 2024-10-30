@@ -216,7 +216,7 @@ class mcts_vh_env:
                 
                 valid_action_space += [
                     f'[{action}] <{grab_name}> ({grab_id}) <{item_name}> ({item_id})'
-                        for grab_id, grab_name, item_id, item_name in interact_item_idxs]
+                        for grab_id, grab_name, item_id, item_name in interact_item_idxs]   
             else:
                 valid_action_space += [
                     f'[{action}] <{item_name}> ({item_id})'
@@ -303,6 +303,23 @@ class mcts_vh_env:
             done = True
         return text_obs, reward, done, self.history, valid_actions
 
+class mcts_agent:
+    def __init__(self, env, graph_env, model, args):
+        self.env = env
+        self.graph_env = graph_env
+        self.model = model
+        self.args = args
+        self.mcts = MCTSAgent(self.env, self.graph_env, self.model, self.args)
+
+    def reset(self):
+        self.mcts.reset()
+
+    def step(self, obs, reward, done):
+        return self.mcts.step(obs, reward, done)
+
+    def get_action(self, obs):
+        return self.mcts.get_action(obs)
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--exploration_constant', default=24, type=int)
@@ -371,7 +388,7 @@ def test():
         task_goal=vhenv.task_goal,
         graph=graph,
     )
-    agent = MCTSAgent(args, env, uct_type=args.uct_type, use_llm=True)
+    # agent = MCTSAgent(args, env, uct_type=args.uct_type, use_llm=True)
     # llm_policy = LLMPolicy(device="cuda:0")
     print(vhenv.task_goal)
     history = []
@@ -380,7 +397,7 @@ def test():
     total = 0
     for i in range(len(vhenv.env_task_set)):
 
-        agent.llm_policy.prompt_buffer.clear()
+        # agent.llm_policy.prompt_buffer.clear()
         obs = vhenv.reset(task_id=i)
         # if 'setup_table' in vhenv.task_name or 'put_dishwasher' in vhenv.task_name:
         #     continue
@@ -389,7 +406,7 @@ def test():
         graph = vhenv.get_graph()
         plate_ids = []
         task_goal = vhenv.task_goal[0]
-        goal = agent.env.get_goal_(task_goal, graph)
+        # goal = agent.env.get_goal_(task_goal, graph)
         formal_goal = llm_model.interpret_goal(goal, container_name2id)
         task_goal_ = {0: {key: num[0] for key, num in formal_goal.items()},
                       1: {key: num[0] for key, num in formal_goal.items()}}
