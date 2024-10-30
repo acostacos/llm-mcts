@@ -10,6 +10,7 @@ import pickle
 import argparse
 import time
 import copy
+import random
 
 def clean_graph(state, goal_spec, last_opened):
     new_graph = {}
@@ -113,6 +114,7 @@ class mcts_vh_env:
         self.belief = None
     
     def filtering_graph(self, graph):
+        '''Filtering the graph to remove duplicate edges'''
         new_edges = []
         edge_dict = {}
         for edge in graph['edges']:
@@ -303,22 +305,6 @@ class mcts_vh_env:
             done = True
         return text_obs, reward, done, self.history, valid_actions
 
-class mcts_agent:
-    def __init__(self, env, graph_env, model, args):
-        self.env = env
-        self.graph_env = graph_env
-        self.model = model
-        self.args = args
-        self.mcts = MCTSAgent(self.env, self.graph_env, self.model, self.args)
-
-    def reset(self):
-        self.mcts.reset()
-
-    def step(self, obs, reward, done):
-        return self.mcts.step(obs, reward, done)
-
-    def get_action(self, obs):
-        return self.mcts.get_action(obs)
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -388,7 +374,7 @@ def test():
         task_goal=vhenv.task_goal,
         graph=graph,
     )
-    # agent = MCTSAgent(args, env, uct_type=args.uct_type, use_llm=True)
+    agent = MCTSAgent(args, env, uct_type=args.uct_type, use_llm=False)
     # llm_policy = LLMPolicy(device="cuda:0")
     print(vhenv.task_goal)
     history = []
@@ -406,7 +392,7 @@ def test():
         graph = vhenv.get_graph()
         plate_ids = []
         task_goal = vhenv.task_goal[0]
-        # goal = agent.env.get_goal_(task_goal, graph)
+        goal = agent.env.get_goal_(task_goal, graph)
         formal_goal = llm_model.interpret_goal(goal, container_name2id)
         task_goal_ = {0: {key: num[0] for key, num in formal_goal.items()},
                       1: {key: num[0] for key, num in formal_goal.items()}}
@@ -418,46 +404,29 @@ def test():
         agent.env.update_(None, obs[0]) 
         # agent.env.update(None, obs[0]) 
         history = []
-        
-        valid_actions_2 = get_valid_action_alt(obs, 0)
-
-        # print("Task goal: ", task_goal)
-        # print("Formal goal: ", formal_goal)
-        # print("----------------------")
-        # print("obs: ", obs)
-        # print("----------------------")
-        # print("valid actions: ", valid_actions) 
-        # print("----------------------")
-        # print("valid actions 2: ", valid_actions_2)   
-        # print("----------------------")
-        # issubset = all(item in valid_actions_2 for item in valid_actions)
-        # print("Is subset: ", issubset)
-
-        #exit()    
 
         done = False
         for i in range(30):
             print(" ---------------------- Step: ", i, " ---------------------- ")
             
-            print("---------------------------")
-            print("obs: ", obs)
-            print("---------------------------")
-            nodes = obs[0]['nodes']
-            objects = [node['class_name'] for node in nodes]
-            print("objects: ", objects)
-            print("---------------------------")
-            print("valid actions: ", valid_actions)
+            action = random.choice(valid_actions)
             
-            action = agent.search(obs, history, i, valid_actions, done)
+            # action = agent.search(obs, history, i, valid_actions, done)
             # action = agent.search(obs, history, i, valid_actions, done)
             # action = agent.llm_policy.act(history, obs, valid_actions, agent.env.get_goal()) 
             # ob, reward, done, history, valid_actions = env.step(agent.valid_action_dict[action])
             graph = vhenv.get_graph()
             plate_ids = []
+            
+            print("Action: ", action)
 
             obs, reward, done, info, success = vhenv.step({0: action})
             agent.env.update_(action, obs[0]) 
             valid_actions = agent.env.get_valid_action(obs)
+            valid_actions_2 = get_valid_action_alt(obs, 0)
+            #print("\nValid actions: ", valid_actions)
+            #print("\nValid actions 2: ", valid_actions_2)
+            print("1=2", valid_actions == valid_actions_2)
             history.append(action)
             if done:
                 succ += 1

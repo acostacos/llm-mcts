@@ -115,7 +115,7 @@ class MCTSAgent:
             _, root = self.simulate(self.root, 0)
             self.root = root
         # select best action by Q-value
-        best_action_node_idx = self.greedy_action_node(self.root, 0, 0, if_print=True)
+        best_action_node_idx = self.greedy_action_node(self.root, 0, 0, if_print=False)
         # select best action by Count
         # best_action_node = self.max_visit_action_node(self.root)
         best_action_node = self.root.children[best_action_node_idx]
