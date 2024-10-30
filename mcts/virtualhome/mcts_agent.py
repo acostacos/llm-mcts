@@ -389,7 +389,7 @@ def test():
         graph = vhenv.get_graph()
         plate_ids = []
         task_goal = vhenv.task_goal[0]
-        goal = agent.env.get_goal_(task_goal, graph)
+        goal = agent.env.get_goal_(task_goal, graph)        
         formal_goal = llm_model.interpret_goal(goal, container_name2id)
         task_goal_ = {0: {key: num[0] for key, num in formal_goal.items()},
                       1: {key: num[0] for key, num in formal_goal.items()}}
@@ -401,6 +401,11 @@ def test():
         agent.env.update_(None, obs[0]) 
         # agent.env.update(None, obs[0]) 
         history = []
+        
+        print("Task goal: ", task_goal)
+        print("Formal goal: ", formal_goal)
+        print("goal: ", goal)
+        print("goal_spec: ", goal_spec)
         
         valid_actions_2 = get_valid_action_alt(obs, 0)
 
